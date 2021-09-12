@@ -12,7 +12,13 @@ function playSong(songId) {
  * Creates a song DOM element based on a song object.
  */
 function createSongElement({ id, title, album, artist, duration, coverArt }) {
-    const children = []
+    const children = [
+        createElement("p", title, [], {}),
+        createElement("p", album, [], {}),
+        createElement("p", artist, [], {}),
+        createElement("p", durationFormat(duration), [], {}),
+        createElement("img", null, [], { src: coverArt }),
+    ]
     const classes = []
     const attrs = { onclick: `playSong(${id})` }
     return createElement("div", children, classes, attrs)
@@ -41,7 +47,28 @@ function createPlaylistElement({ id, name, songs }) {
  * @param {Object} attributes - the attributes for the new element
  */
 function createElement(tagName, children = [], classes = [], attributes = {}) {
-    // Your code here
+    const element = document.createElement(tagName)
+    for (let child of children) {
+        element.append(child)
+    }
+    for (let name of classes) {
+        element.classList.append(name)
+    }
+    for (let attribute of attributes) {
+        element.setAttribute(attribute, attributes[attribute])
+    }
+    return element
 }
 
+const elemntHtml = document.getElementById("songs")
+
 // You can write more code below this line
+function durationFormat(duration) {
+    //converting from seconds to mm:ss format
+    let minutes = Math.floor(duration / 60)
+    let seconds = duration % 60
+    if (minutes < 10 && seconds < 10) return "0" + minutes + ":" + "0" + seconds
+    else if (minutes < 10) return "0" + minutes + ":" + seconds
+    else if (seconds < 10) return minutes + ":" + "0" + seconds
+    else return minutes + ":" + seconds
+}
