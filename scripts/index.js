@@ -4,8 +4,14 @@
  *
  * @param {String} songId - the ID of the song to play
  */
+
 function playSong(songId) {
-    alert("works")
+    for (let song of player.songs) {
+        document.getElementById("song" + song.id).classList.remove("playing")
+        if (song.id === songId) {
+            document.getElementById("song" + song.id).classList.add("playing")
+        }
+    }
 }
 
 /**
@@ -20,7 +26,7 @@ function createSongElement({ id, title, album, artist, duration, coverArt }) {
         createElement("img", [], [], { src: coverArt }),
     ]
     const classes = []
-    const attrs = { onclick: `playSong(${id})` }
+    const attrs = { onclick: `playSong(${id})`, id: "song" + id }
     return createElement("div", children, classes, attrs)
 }
 
@@ -30,7 +36,7 @@ function createSongElement({ id, title, album, artist, duration, coverArt }) {
 function createPlaylistElement({ id, name, songs }) {
     const children = [
         createElement("p", name, [], {}),
-        createElement("p", songs, [], {}),
+        createElement("p", [songs.length], [], {}),
         createElement("p", playlistDuration(id), [], {}),
     ]
     const classes = []
