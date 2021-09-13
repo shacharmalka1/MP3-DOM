@@ -17,7 +17,7 @@ function createSongElement({ id, title, album, artist, duration, coverArt }) {
         createElement("p", album, [], {}),
         createElement("p", artist, [], {}),
         createElement("p", durationFormat(duration), [], {}),
-        createElement("img", null, [], { src: coverArt }),
+        createElement("img", [], [], { src: coverArt }),
     ]
     const classes = []
     const attrs = { onclick: `playSong(${id})` }
@@ -30,7 +30,7 @@ function createSongElement({ id, title, album, artist, duration, coverArt }) {
 function createPlaylistElement({ id, name, songs }) {
     const children = [
         createElement("p", name, [], {}),
-        createElement("p", songs.length, [], {}),
+        createElement("p", songs, [], {}),
         createElement("p", playlistDuration(id), [], {}),
     ]
     const classes = []
@@ -52,12 +52,8 @@ function createPlaylistElement({ id, name, songs }) {
  */
 function createElement(tagName, children = [], classes = [], attributes = {}) {
     const element = document.createElement(tagName)
-    if (Array.isArray(children))
-        for (let child of children) {
-            element.append(child)
-        }
-    else {
-        element.innerHTML = children
+    for (let child of children) {
+        element.append(child)
     }
     for (let name of classes) {
         element.classList.add(name)
