@@ -24,6 +24,8 @@ function createSongElement({ id, title, album, artist, duration, coverArt }) {
         createElement("p", artist, [], {}),
         createElement("p", durationFormat(duration), [], {}),
         createElement("img", [], [], { src: coverArt }),
+        createElement("button", ["▶️"], ["play-song-button"], {}),
+        createElement("button", ["❌"], ["remove-song"], {}),
     ]
     const classes = []
     const attrs = { onclick: `playSong(${id})`, id: "song" + id }
