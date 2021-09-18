@@ -4,34 +4,80 @@
  *
  * @param {Number} songId - the ID of the song to play
  */
-function playSong(songId) {
-    for (let song of player.songs) {
-        document.getElementById("song" + song.id).classList.remove("playing")
-        if (song.id === songId) {
-            document.getElementById("song" + song.id).classList.add("playing")
-        }
-    }
-}
-/**
- * Removes a song from the player, and updates the DOM to match.
- *
- * @param {Number} songId - the ID of the song to remove
- */
-var divAllSongs = document.getElementById("songs")
-divAllSongs.addEventListener("click", removeSongs)
 
-function removeSongs(e, songId) {
-    if (e.target.classList.contains("remove-song")) {
-        var divSong = e.target.parentElement
-        divAllSongs.removeChild(divSong)
+function playSong(songId) {
+    const divAllSong = document.getElementsByClassName("child") //the div that wrap of the song
+    for (let divSong of divAllSong) {
+        //remove the green mark from all songs
+        divSong.style.borderLeft = "transparent"
+    }
+    const currentSong = document.getElementById(songId)
+    currentSong.style.borderRadius = "10px" //the left green mark when song playing
+    currentSong.style.borderLeft = "10px solid white"
+}
+
+//adding the event listener to the songs list
+let divOfAllSongs = document.getElementById("songs")
+divOfAllSongs.addEventListener("click", (e) => {
+    if (e.target.className === "play-song-button") {
+        playSong(e.target.parentElement.id)
+    } else if (e.target.className === "remove-song-button") {
+        removeSongFromPlayer(e.target.parentElement.id)
+        const divSong = e.target.parentElement
+        divOfAllSongs.removeChild(divSong)
+    }
+})
+
+function removeSongFromPlayer(songId) {
+    for (let playlist of player.playlists) {
+        for (let i = 0; i <= playlist.songs.length; i++) {
+            if (playlist.songs[i] == songId) {
+                playlist.songs.splice(i, 1)
+            }
+        }
     }
 }
 
 /**
  * Adds a song to the player, and updates the DOM to match.
  */
-function addSong({ title, album, artist, duration, coverArt }) {
-    // Your code here
+const addButton = document.getElementById("add-button")
+addButton.addEventListener("click", addSong)
+function addSong(e) {
+    e.preventDefault()
+    const divAllSongs = document.getElementById("songs")
+    const idVal = generateId()
+    const titleVal = document.getElementById("title").value
+    const albumVal = document.getElementById("album").value
+    const artistVal = document.getElementById("artist").value
+    // const durationVal = document.getElementById("duration").value
+    const durationVal = covertFormatToNumber(document.getElementById("duration").value)
+    const coverArtVal = document.getElementById("cover-art").value
+    let songa = {
+        id: idVal,
+        title: titleVal,
+        album: albumVal,
+        artist: artistVal,
+        duration: durationVal,
+        coverArt: coverArtVal,
+    }
+    player.songs.push(songa)
+    let song = createSongElement(songa)
+    divAllSongs.append(song)
+}
+
+function covertFormatToNumber(duration) {
+    return Number(duration.split(":")[0]) * 60 + Number(duration.split(":")[1])
+}
+
+function generateId() {
+    //the function return the biggest ID from thw array
+    let max = player.songs[0].id
+    for (let i = 0; i < player.songs.length; i++) {
+        //run on songs or playlists array
+        if (max < player.songs[i].id) max = player.songs[i].id
+    }
+    return max + 1
 }
 
 /**
@@ -58,29 +104,37 @@ function handleAddSongEvent(event) {
  */
 function createSongElement({ id, title, album, artist, duration, coverArt }) {
     const children = [
-        createElement("p", title, [], {}),
-        createElement("p", album, [], {}),
-        createElement("p", artist, [], {}),
-        createElement("p", durationFormat(duration), [], {}),
-        createElement("img", [], [], { src: coverArt }),
-        createElement("button", ["▶️"], ["play-song-button"], {}),
+        createElement("img", [], ["border-Img"], { src: coverArt }),
+        createElement("span", title, [], {}),
+        createElement("span", " | " + album, [], {}),
+        createElement("span", " | " + artist, [], {}),
+        createElement("span", durationFormat(duration), ["duration"], {}),
+        createElement("button", ["▶️"], ["play-song-button"], { onclick: `playSong(${id})` }),
         createElement("button", ["❌"], ["remove-song"], {}),
     ]
-    const classes = []
-    const attrs = { onclick: `playSong(${id})`, id: "song" + id }
+    const classes = ["child"]
+    const attrs = { onclick: `playSong(${id})`, id: "song" + id, title: "title" + title }
     return createElement("div", children, classes, attrs)
 }
+
+const divAllSongss = document.getElementById("songs")
+divAllSongss.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-song")) {
+        const divSong = e.target.parentElement
+        divAllSongss.removeChild(divSong)
+    }
+})
 
 /**
  * Creates a playlist DOM element based on a playlist object.
  */
 function createPlaylistElement({ id, name, songs }) {
     const children = [
-        createElement("p", name, [], {}),
-        createElement("p", [songs.length], [], {}),
-        createElement("p", playlistDuration(id), [], {}),
+        createElement("span", name + " | ", [], {}),
+        createElement("span", [songs.length] + " songs | ", [], {}),
+        createElement("span", playlistDuration(id), ["duration"], {}),
     ]
-    const classes = []
+    const classes = ["child"]
     const attrs = {}
     return createElement("div", children, classes, attrs)
 }
@@ -131,7 +185,7 @@ generateSongs()
 generatePlaylists()
 
 // Making the add-song-button actually do something
-document.getElementById("add-button").addEventListener("click", handleAddSongEvent)
+// document.getElementById("add-button").addEventListener("click", handleAddSongEvent)
 
 function findPlaylistById(id) {
     //Get a playlist id and return the wanted playlist by his id

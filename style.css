@@ -1,5 +1,5 @@
 .playing {
-    color: rgb(126, 255, 249);
+    color: rgb(116, 255, 111);
 }
 
 body {
@@ -19,7 +19,7 @@ img {
     border-radius: 5%;
 }
 
-#list {
+#player {
     display: flex;
     justify-content: start;
     flex-direction: column;
@@ -29,4 +29,16 @@ img {
 button {
     width: 40px;
     height: 30px;
+}
+.duration {
+    float: right;
+}
+div {
+    border-color: mistyrose;
+}
+.play-song-button {
+    float: right;
+}
+.remove-song {
+    float: right;
 }
